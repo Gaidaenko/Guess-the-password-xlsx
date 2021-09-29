@@ -6,6 +6,7 @@ using System.Linq;
 using System.Diagnostics;
 using System.IO;
 
+
 namespace Guess_the_password_xlsx
 {
     public partial class Form1 : Form
@@ -23,7 +24,7 @@ namespace Guess_the_password_xlsx
         private void openTxt()
         {
             OpenFileDialog openFileTxt = new OpenFileDialog();
-            openFileTxt.Filter = "Формат txt(*.txt)|*.txt|Все файлы(*.*)|*.*";                 
+            openFileTxt.Filter = "Формат txt(*.txt)|*.txt";                 
             openFileTxt.Title = "Выберете файл";
 
             if (openFileTxt.ShowDialog() == DialogResult.OK)
@@ -34,7 +35,7 @@ namespace Guess_the_password_xlsx
         private void openXlsx()
         {
             OpenFileDialog openFileXlsx = new OpenFileDialog();
-            openFileXlsx.Filter = "Формат xlsx(*.xlsx)|*.xlsx|Все файлы(*.*)|*.*";                
+            openFileXlsx.Filter = "Формат xlsx(*.xlsx)|*.xlsx|xls(*.xls)|*.xls";                
             openFileXlsx.Title = "Выберете файл";
 
             if (openFileXlsx.ShowDialog() == DialogResult.OK)
@@ -83,13 +84,15 @@ namespace Guess_the_password_xlsx
                                  Local: false,
                                  CorruptLoad: false);
 
-                            Process.Start(fileXlsx);
+                            Process.Start(fileXlsx);                                                                                      
 
                             label4.Text = tryPassword;
                             return;
                         }
                         catch
                         {
+
+
                             i++;
                             label2.Text = i.ToString();
 
