@@ -91,7 +91,12 @@ namespace Guess_the_password_xlsx
                         }
                         catch
                         {
-
+                            Process[] List;
+                            List = Process.GetProcessesByName("EXCEL");
+                            foreach (var process in List)
+                            {
+                                process.Kill();
+                            }
 
                             i++;
                             label2.Text = i.ToString();
@@ -110,8 +115,8 @@ namespace Guess_the_password_xlsx
             {
                 MessageBox.Show("Отсутствуют подходящие пароли.");
             }
-        }
-            
+        }            
+
         private void button1_Click(object sender, EventArgs e)
         {
             openXlsx();          
