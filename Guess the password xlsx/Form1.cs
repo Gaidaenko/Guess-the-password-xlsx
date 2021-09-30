@@ -5,7 +5,7 @@ using Excel = Microsoft.Office.Interop.Excel;
 using System.Linq;
 using System.Diagnostics;
 using System.IO;
-
+using System.Threading;
 
 namespace Guess_the_password_xlsx
 {
@@ -16,15 +16,18 @@ namespace Guess_the_password_xlsx
         public static string fileXlsx;
         public static string fileTxt;
         public static int i = 0;
+        private delegate void SafeCallDelegate(string text);
+        private Thread thread = null;
+
         public Form1()
         {
-            InitializeComponent();
+            InitializeComponent();                                             
         }
 
         private void openTxt()
         {
-            OpenFileDialog openFileTxt = new OpenFileDialog();
-            openFileTxt.Filter = "Формат txt(*.txt)|*.txt";                 
+            OpenFileDialog openFileTxt = new OpenFileDialog();                                       //сделать исключение при отсутствии выбора файла txt
+            openFileTxt.Filter = "Формат txt(*.txt)|*.txt";                                           // сделать кнопку -  превать подбор пароля
             openFileTxt.Title = "Выберете файл";
 
             if (openFileTxt.ShowDialog() == DialogResult.OK)
@@ -43,8 +46,34 @@ namespace Guess_the_password_xlsx
                 fileXlsx = openFileXlsx.FileName;
             }
         }
-        private void Try()
+        private void WriteTextLabel_4(string textLabel4)
         {
+            if (label1.InvokeRequired)
+            {
+                var lb1 = new SafeCallDelegate(WriteTextLabel_4);
+                label4.Invoke(lb1, new object[] {textLabel4});
+            }
+            else
+            {
+                label4.Text = tryPassword;
+            }
+        }
+        private void WriteTextLabel_3(string textLabel2)
+        {
+            
+            if (label2.InvokeRequired)
+            {
+                var lb2 = new SafeCallDelegate(WriteTextLabel_3);
+                label2.Invoke(lb2, new object[] {textLabel2});
+            }
+            else
+            {
+                label2.Text = i.ToString();
+            }
+        }
+
+        public void Try()
+        {            
             try
             {
                 using (StreamReader text = new StreamReader(fileTxt))
@@ -62,6 +91,7 @@ namespace Guess_the_password_xlsx
 
                 Next: for (i = i; i < textArr.Length; i++)
                     {
+                        
                         tryPassword = textArr[i];
 
                         try
@@ -84,13 +114,13 @@ namespace Guess_the_password_xlsx
                                  Local: false,
                                  CorruptLoad: false);
 
-                            Process.Start(fileXlsx);                                                                                      
+                            Process.Start(fileXlsx);
 
-                            label4.Text = tryPassword;
+                            WriteTextLabel_4(i.ToString());    
                             return;
                         }
                         catch
-                        {
+                        {                          
                             Process[] List;
                             List = Process.GetProcessesByName("EXCEL");
                             foreach (var process in List)
@@ -99,7 +129,7 @@ namespace Guess_the_password_xlsx
                             }
 
                             i++;
-                            label2.Text = i.ToString();
+                            WriteTextLabel_3(tryPassword);
 
                            if (textArr[i] == null)                                                              
                            {
@@ -107,7 +137,7 @@ namespace Guess_the_password_xlsx
                            }
 
                             goto Next; 
-                        }
+                        }  
                     }
                 }
             }
@@ -115,6 +145,7 @@ namespace Guess_the_password_xlsx
             {
                 MessageBox.Show("Отсутствуют подходящие пароли.");
             }
+            
         }            
 
         private void button1_Click(object sender, EventArgs e)
@@ -122,12 +153,13 @@ namespace Guess_the_password_xlsx
             openXlsx();          
         }
         private void button2_Click(object sender, EventArgs e)
-        {
+        {      
             openTxt();
         }
         private void button3_Click(object sender, EventArgs e)
         {
-            Try();
+            Thread thread2 = new Thread(Try);           
+            thread2.Start();           
         }
         private void label1_Click(object sender, EventArgs e)
         {
