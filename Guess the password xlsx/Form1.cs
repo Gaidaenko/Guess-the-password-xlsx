@@ -26,8 +26,8 @@ namespace Guess_the_password_xlsx
 
         private void openTxt()
         {
-            OpenFileDialog openFileTxt = new OpenFileDialog();                                       //сделать исключение при отсутствии выбора файла txt
-            openFileTxt.Filter = "Формат txt(*.txt)|*.txt";                                           // сделать кнопку -  превать подбор пароля
+            OpenFileDialog openFileTxt = new OpenFileDialog();                                         
+            openFileTxt.Filter = "Формат txt(*.txt)|*.txt";                                           
             openFileTxt.Title = "Выберете файл";
 
             if (openFileTxt.ShowDialog() == DialogResult.OK)
@@ -73,9 +73,15 @@ namespace Guess_the_password_xlsx
         }
 
         public void Try()
-        {            
+        {
             try
             {
+                if (fileXlsx == null)
+                {
+                    MessageBox.Show("Отсутствуют подходящие пароли.");
+                    return;
+                }
+
                 using (StreamReader text = new StreamReader(fileTxt))
                 {
                     var result = text.ReadToEnd();
