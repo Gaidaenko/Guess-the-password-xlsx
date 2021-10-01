@@ -17,7 +17,7 @@ namespace Guess_the_password_xlsx
         public static string fileTxt;
         public static int i = 0;
         private delegate void SafeCallDelegate(string text);
-        private Thread thread = null;
+        private Thread threadStart = null;
 
         public Form1()
         {
@@ -33,6 +33,7 @@ namespace Guess_the_password_xlsx
             if (openFileTxt.ShowDialog() == DialogResult.OK)
             {
                 fileTxt = openFileTxt.FileName;
+                label2.Text = null;
             }
         }
         private void openXlsx()
@@ -58,12 +59,11 @@ namespace Guess_the_password_xlsx
                 label4.Text = tryPassword;
             }
         }
-        private void WriteTextLabel_3(string textLabel2)
-        {
-            
+        private void WriteTextLabel_2(string textLabel2)
+        {            
             if (label2.InvokeRequired)
             {
-                var lb2 = new SafeCallDelegate(WriteTextLabel_3);
+                var lb2 = new SafeCallDelegate(WriteTextLabel_2);
                 label2.Invoke(lb2, new object[] {textLabel2});
             }
             else
@@ -76,12 +76,6 @@ namespace Guess_the_password_xlsx
         {
             try
             {
-                if (fileXlsx == null)
-                {
-                    MessageBox.Show("Отсутствуют подходящие пароли.");
-                    return;
-                }
-
                 using (StreamReader text = new StreamReader(fileTxt))
                 {
                     var result = text.ReadToEnd();
@@ -135,12 +129,12 @@ namespace Guess_the_password_xlsx
                             }
 
                             i++;
-                            WriteTextLabel_3(tryPassword);
+                            WriteTextLabel_2(tryPassword);
 
-                           if (textArr[i] == null)                                                              
-                           {
+                            if (textArr[i] == null)                                                              
+                            {
                                 //go to exception                                                                     
-                           }
+                            }
 
                             goto Next; 
                         }  
@@ -149,10 +143,10 @@ namespace Guess_the_password_xlsx
             }
             catch(Exception e)
             {
+ 
                 MessageBox.Show("Отсутствуют подходящие пароли.");
-            }
-            
-        }            
+            }           
+        }
 
         private void button1_Click(object sender, EventArgs e)
         {
@@ -164,12 +158,25 @@ namespace Guess_the_password_xlsx
         }
         private void button3_Click(object sender, EventArgs e)
         {
-            Thread thread2 = new Thread(Try);           
-            thread2.Start();           
+            if (fileXlsx == null)
+            {
+                MessageBox.Show("Отсутствуют подходящие пароли.");
+                return;
+            }
+
+            threadStart = new Thread(Try);
+            threadStart.Start();           
+        }
+        private void button4_Click(object sender, EventArgs e)
+        {
+            if (threadStart != null)
+            {
+                threadStart.Abort();
+            }
         }
         private void label1_Click(object sender, EventArgs e)
         {
-
+            
         }
         private void label2_Click(object sender, EventArgs e)
         {
